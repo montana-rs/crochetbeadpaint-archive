@@ -1,0 +1,27 @@
+MIT License
+
+Copyright (c) 2026 the repository owner
+
+This license applies ONLY to the original "glue" code written for this repository
+(index.html and any other files explicitly authored for this project — see NOTICE.md
+for the full scope and provenance statement). It does NOT extend to
+assets/application-latest.js, assets/application-latest.css, or any other file recovered
+verbatim from Internet Archive Wayback Machine captures of crochetbeadpaint.info, which
+remain the property of their original author(s).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this
+original glue code and associated documentation files (the "Software"), to deal in the
+Software without restriction, including without limitation the rights to use, copy,
+modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be included in all copies
+or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.

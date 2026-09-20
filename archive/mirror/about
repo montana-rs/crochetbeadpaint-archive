@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrochetBeadPaint</title>
+    <meta content="authenticity_token" name="csrf-param" />
+<meta content="7f2fWz9m6BsH2qtSctOecygTRo9tXDBsfEmDnA3CBMU=" name="csrf-token" />
+
+    <link href="/assets/application-81c852f77383214f02192f84d727f014.css" media="all" rel="stylesheet" />
+
+    <script src="/assets/application-9e1762fc85e23d6f682740634fea156e.js"></script>
+    <script>
+//<![CDATA[
+
+    I18n.defaultLocale = "en";
+    I18n.locale = "de";
+    localStorage["locale"] = "de";
+    I18n.fallbacks = true;
+
+//]]>
+</script>
+  </head>
+  <body>
+    <div class="navbar navbar-fluid-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">CrochetBeadPaint</a>
+          <div style="display: inline-block;" class="pull-right right-nav">
+            <ul class="nav">
+              <li><a href="/about"><i class="ls-icon-info"></i></a></li>
+            </ul>
+          </div>
+          <div style="display: inline-block;" class="pull-right flags">
+  <ul class="nav">
+    <li>
+      <a href="/about?locale=ru"><img alt="Russian federation" src="/assets/flags/Russian_Federation-a5756d14acb7d6a64a08dd06d54c896d.png" /></a>
+    </li>
+    <li>
+      <a href="/about?locale=en"><img alt="Uk" src="/assets/flags/UK-eb8ad36cb5051a30d611477fe8d5f53b.png" /></a>
+    </li>
+    <li>
+      <a href="/about?locale=de"><img alt="Germany" src="/assets/flags/Germany-b7e14103352177b75635ab643acd26e2.png" /></a>
+    </li>
+  </ul>
+</div>
+
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        
+        <h4>
+  <p>Email:<a href="mailto:info@strelok.us">info@strelok.us</a>,<a href="mailto:steel_heart@bk.ru">steel_heart@bk.ru</a></p>
+  <a href="/private_messages/new?to_user_id=1">Send private message to the developer.</a>
+  <br/>
+  <p>Folgende Spendemöglichkeiten stehen Ihnen zur Verfügung:</p>
+</h4>
+
+
+
+<h4>PayPal(rub):</h4>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+  <input type="hidden" name="cmd" value="_s-xclick">
+  <input type="hidden" name="hosted_button_id" value="A86RV6RWQB5XU">
+  <input type="image" src="https://www.paypalobjects.com/ru_RU/RU/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal — более безопасный и легкий способ оплаты через Интернет!">
+  <img alt="" border="0" src="https://www.paypalobjects.com/ru_RU/i/scr/pixel.gif" width="1" height="1">
+</form>
+<h4>PayPal(euro):</h4>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+  <input type="hidden" name="cmd" value="_s-xclick">
+  <input type="hidden" name="hosted_button_id" value="8TC6XXREGYJKQ">
+  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+  <img alt="" border="0" src="https://www.paypalobjects.com/ru_RU/i/scr/pixel.gif" width="1" height="1">
+</form>
+<h4>Yandex Money:</h4>
+<iframe frameborder="0" allowtransparency="true" scrolling="no" src="https://money.yandex.ru/embed/donate.xml?account=410012414131930&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=&targets=crochetbeadpaint.info&target-visibility=on&project-name=crochetbeadpaint.info&project-site=http%3A%2F%2Fcrochetbeadpaint.info%2F&button-text=01&mail=on&successURL=http%3A%2F%2Fcrochetbeadpaint.info%2F" width="525" height="117"></iframe>
+<h4>Yandex MasterCard: 5106  2160  0995  3799</h4>
+<h4>Карта Сбербанка MasterCard: 5469 4000 1442 6121</h4>
+<h4>Qiwi Кошелек: +79167758952</h4>
+      </div><!--/row-->
+
+      <footer>
+      </footer>
+
+    </div> <!-- /container -->
+    <iframe id="x-download-frame" name="x-download-frame" width="0" height="0" style="display: none;" application="yes" ></iframe>
+    <script>
+  $(function(){
+      $.reject({
+          reject: {
+              msie: true
+          },
+          display: ['chrome','firefox','safari'],
+          imagePath: '/images/browsers/',
+          close: false,
+          header:'К сожалению работа данного веб приложения не возможна в Internet Explorer',
+          paragraph1:'',
+          paragraph2:'Для продолжения работы загрузите один из предложенных браузеров',
+          browserInfo: {
+              chrome: {
+                  text: 'Chrome',
+                  url: 'http://www.google.com/chrome/'
+              },
+              firefox: {
+                  text: 'Firefox',
+                  url: 'http://www.mozilla.com/firefox/'
+              },
+              safari: {
+                  text: 'Safari',
+                  url: 'http://www.apple.com/safari/download/'
+              }
+          },
+          beforeReject: function() {
+              var browser_version = parseFloat($.browser.version);
+              if (
+                      $.browser.name === 'firefox' && browser_version < 27 ||
+                      $.browser.name === 'chrome' && browser_version < 31 ||
+                      $.browser.name === 'safari' && browser_version < 5
+              ) {
+                  this.reject.all = true;
+                  this.closeLink = 'Закрыть';
+                  this.closeMessage = 'Приложение может нестабильно работать с устаревшими версиями браузеров';
+                  this.close = true;
+                  this.header = 'Вы используете устаревшую версию браузера';
+                  this.paragraph2 = 'Для загрузки актуальной версии воспользуйтечь одной из предложенных ссылок';
+                  this.closeCookie = true;
+              };
+              if($.browser.name === 'opera'){
+                  this.reject.all = true;
+                  this.closeLink = 'Закрыть';
+                  this.closeMessage = 'Приложение не до конца совместимо с браузером Opera';
+                  this.close = true;
+                  this.header = 'К сожалению даного веб приложение не полностью совместимо с браузером Opera';
+                  this.paragraph2 = 'Для загрузки другого браузеза воспользуйтечь одной из предложенных ссылок';
+                  this.closeCookie = true;
+              };
+          }
+      });
+  })
+</script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-55676964-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

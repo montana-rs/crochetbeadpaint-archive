@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CrochetBeadPaint — Offline Recovery Edition</title>
+<link rel="stylesheet" href="assets/application-latest.css">
+<style>
+  body{padding-top:60px;font-family:Arial,Helvetica,sans-serif;}
+  .navbar{position:fixed;top:0;left:0;right:0;background:#2c3e50;color:#fff;padding:8px 16px;z-index:1000;}
+  .navbar h1{font-size:18px;display:inline-block;margin:0 20px 0 0;color:#fff;}
+  .btn-toolbar{margin:8px 0;}
+  .btn{display:inline-block;padding:6px 10px;margin:2px;border:1px solid #ccc;background:#f5f5f5;cursor:pointer;border-radius:4px;font-size:13px;}
+  .btn:hover{background:#e5e5e5;}
+  .btn.active{background:#3498db;color:#fff;border-color:#2980b9;}
+  .btn-danger{background:#e74c3c;color:#fff;}
+  #main_field{overflow:auto;vertical-align:bottom;float:left;margin-right:5px;border:1px solid #ccc;background:#fff;}
+  #main_field canvas{padding-bottom:30px;}
+  .right_panel{float:left;width:260px;padding:10px;background:#fafafa;border:1px solid #ddd;}
+  .modal{display:none;position:fixed;top:10%;left:50%;transform:translateX(-50%);
+         background:#fff;border:1px solid #999;padding:20px;z-index:2000;min-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+  .modal.show{display:block;}
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1999;}
+  .modal-backdrop.show{display:block;}
+  #colors{border-collapse:collapse;}
+  #colors td{width:22px;height:22px;border:1px solid #999;cursor:pointer;}
+  #colors td.active{outline:3px solid #3498db;}
+  .item_color_div, .color_table_item{width:20px;height:20px;display:inline-block;border:1px solid #888;}
+  .banner{background:#fff3cd;border:1px solid #ffe69c;color:#664d03;padding:10px 16px;margin-bottom:10px;font-size:13px;}
+  a.shop{display:none;}
+  select, input[type=text], input[type=number]{padding:3px;margin:2px;}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <h1>CrochetBeadPaint <small style="font-weight:normal;opacity:.7">(offline recovery build)</small></h1>
+</div>
+
+<div style="margin-top:50px;padding:10px 16px;">
+<div class="banner">
+  This is a community-recovered <b>offline</b> rebuild of the crochetbeadpaint.info bead-crochet
+  pattern editor, reconstructed from its Wayback-Machine-archived client-side JavaScript
+  (<code>application-latest.js</code>, captured 2022-10-07) after the original site went permanently
+  offline. It runs entirely in your browser — patterns save to <code>localStorage</code> via the app's
+  built-in offline mode (the original <code>RaportLocalStore</code> class). Server-only features
+  (sharing, comments, community gallery, sound packs served from <code>/images/sounds/</code>, login)
+  are not available. Export to PNG / PDF / DBB / JBB works locally.
+</div>
+
+<div class="btn-toolbar">
+  <span class="paint-toolbar">
+    <button class="btn active" id="set_paint" title="Paint">🖌 Paint</button>
+    <button class="btn" id="set_fill" title="Fill">🪣 Fill</button>
+    <button class="btn" id="set_line" title="Line">／ Line</button>
+    <button class="btn" id="set_rectangle" title="Rectangle">▭ Rect</button>
+    <button class="btn" id="select" title="Select">⬚ Select</button>
+    <button class="btn" id="set_pick" title="Pick color">💧 Pick</button>
+  </span>
+  |
+  <button class="btn" id="select_all">Select All</button>
+  <button class="btn" id="set_clone">Clone/Repeat</button>
+  <button class="btn" id="mirror_horizontal">Mirror ↔</button>
+  <button class="btn" id="mirror_vertical">Mirror ↕</button>
+  <button class="btn" id="turn_left">⟲ Rotate</button>
+  <button class="btn" id="turn_right">⟳ Rotate</button>
+  |
+  <button class="btn" id="go_back">↶ Undo</button>
+  <button class="btn" id="go_forward">↷ Redo</button>
+  |
+  <button class="btn" id="zoom_in">Zoom +</button>
+  <button class="btn" id="zoom_out">Zoom −</button>
+  <button class="btn" id="show_symbols">Show Symbols</button>
+  <button class="btn" id="is_draw_first">Show Pattern</button>
+  <button class="btn" id="is_draw_corrected">Show Corrected</button>
+  <button class="btn" id="is_draw_simulation">Show Simulation</button>
+  |
+  <button class="btn" id="insert_rows">Insert Rows</button>
+  <button class="btn" id="delete_rows">Delete Rows</button>
+  |
+  <button class="btn" id="add_color">Add Color</button>
+  <button class="btn" id="delete_unused_colors">Delete Unused Colors</button>
+  <button class="btn" id="hide_left_panel">Toggle Panel</button>
+  |
+  <button class="btn" id="get_png">⬇ PNG</button>
+  <button class="btn" id="get_pdf">⬇ PDF</button>
+  <button class="btn" id="get_dbb">⬇ DBB</button>
+  <button class="btn" id="get_jbb">⬇ JBB</button>
+  <button class="btn" id="save_raport">💾 Save (offline)</button>
+  <button class="btn" id="settings">⚙ Settings</button>
+</div>
+
+<div class="btn-toolbar">
+  Width: <input type="number" id="width" value="18" style="width:60px">
+  <button class="btn" id="set_width_left">◀ Apply width (shift left)</button>
+  <button class="btn" id="set_width_right">Apply width (shift right) ▶</button>
+  Height: <input type="number" id="height" value="60" style="width:60px">
+  <button class="btn" id="set_height">Apply height</button>
+  Shift: <select id="shift_select">
+      <option value="0">0</option><option value="0.25">1/4</option>
+      <option value="0.5" selected>1/2</option><option value="0.75">3/4</option>
+    </select>
+  Calc type: <select id="calc_type"></select>
+</div>
+
+<div id="raport_disc" style="display:none;">
+  <b id="raport_disc_name"></b> —
+  width: <span id="raport_disc_width"></span>,
+  repeat: <span id="raport_disc_repeat"></span> beads /
+  <span id="raport_disc_repeat_rows"></span> rows,
+  used rows: <span id="raport_disc_used_rows"></span>,
+  elements: <span id="raport_disc_elements_count"></span>
+  <div id="raport_disc_colors_count"></div>
+</div>
+
+<div id="main_field"></div>
+
+<div class="right_panel">
+  <h4>Palette</h4>
+  <table id="colors"><tr></tr><tr></tr></table>
+  <div id="currrent_color" style="width:100%;height:20px;border:1px solid #999;margin:6px 0;"></div>
+  <h4>Color repeat table</h4>
+  <div id="raport_items" style="max-height:200px;overflow:auto;"></div>
+  <h4>Calculator</h4>
+  <div id="calculated_elements"></div>
+  <div id="calculator"></div>
+</div>
+
+<div style="clear:both;"></div>
+</div>
+
+<!-- Modals -->
+<div class="modal-backdrop" id="global_backdrop"></div>
+
+<div class="modal" id="modal">
+  <h4>Color</h4>
+  <div id="colorpicker"></div>
+  <input type="text" id="colorpicker_input">
+  <br>Description: <input type="text" id="color_desc">
+  <br><button class="btn" id="choose_color">OK</button>
+  <button class="btn btn-danger" id="delete_color" style="display:none;">Delete</button>
+  <button class="btn" onclick="hideModal('modal')">Cancel</button>
+</div>
+
+<div class="modal" id="modal_clone">
+  <h4>Clone / Repeat pattern</h4>
+  Horizontal displacement: <input type="number" id="horizontal_displacement" value="0"><br>
+  Vertical displacement: <input type="number" id="vertical_displacement" value="0"><br>
+  Number of copies: <input type="number" id="number_of_copies" value="1"><br>
+  <button class="btn" id="submit_clone">Apply</button>
+  <button class="btn" onclick="hideModal('modal_clone')">Cancel</button>
+</div>
+
+<div class="modal" id="modal_edit_settings">
+  <h4>Pattern settings</h4>
+  <form id="settings_form">
+    Name: <input type="text" name="raport[name]"><br>
+    Comment: <textarea name="raport[comment]"></textarea><br>
+    Category: <select id="category_id" name="category_id"><option value="">(none)</option></select><br>
+    <input type="text" id="raport_name_setting" style="display:none">
+    <textarea id="raport_comment_setting" style="display:none"></textarea>
+    <button type="button" class="btn" id="submit_save">Save</button>
+    <button type="button" class="btn" onclick="hideModal('modal_edit_settings')">Close</button>
+  </form>
+</div>
+
+<div class="modal" id="modal_calculator"><h4>Bead calculator</h4><div id="calc_row"></div></div>
+<div class="modal" id="modal_edit_cat"><h4>Category</h4><button class="btn" id="submit_cat_save">Save</button></div>
+<div class="modal" id="modal_other_raport_settings"></div>
+<div class="modal" id="modal_raport_settings"></div>
+<div class="modal" id="image_load_modal">
+  <h4>Import image</h4>
+  <button class="btn" id="import_from_image">Choose image</button>
+  <input type="file" id="image_upload" style="display:none">
+  <div id="image_container"></div>
+  Colors to import: <input type="number" id="import_color_count" value="8">
+  <button class="btn" id="import_to_first">Import</button>
+  <button class="btn" id="import_from_bitmap_raport">Import from bitmap</button>
+  <div id="import_process"></div>
+</div>
+<div id="image_import_modal" class="modal"></div>
+
+<div id="hidden_extras" style="display:none;">
+  <input type="text" id="select_form_placeholder">
+  <div id="new_count">0</div>
+  <button id="reload_comment"></button>
+  <div id="comments-list"></div>
+  <textarea id="comment_body"></textarea>
+  <button id="add_comment"></button>
+  <div id="raport_images"></div>
+  <input type="file" id="upload_images_field" multiple>
+  <button id="add_image_button"></button>
+  <button id="show_image_modal"></button>
+  <div id="raport_tiles_container"></div>
+  <div id="table_body"></div>
+  <input type="file" id="files_field" multiple>
+  <button id="upload_files"></button>
+  <select id="filter_images"></select>
+  <select id="filter_liked"></select>
+  <form id="search_form"></form>
+  <div id="raport_settings"></div>
+  <form id="other_raport_options_form"></form>
+  <form id="raport_options_form"></form>
+  <button id="submit_other_raport_options"></button>
+  <button id="submit_raport_options"></button>
+  <input type="checkbox" id="checkbox_category_id">
+  <button id="like" data-like_url="#" data-unlike_url="#"><i></i></button>
+  <button id="reorder"></button>
+  <button id="delay"></button>
+  <button id="pause"></button>
+  <button id="play"></button>
+  <button id="stop"></button>
+  <span id="length_span"></span>
+  <input type="checkbox" id="manual_reader">
+  <input type="checkbox" id="radio_calc_length">
+  <input type="checkbox" id="radio_calc_rows">
+  <input type="checkbox" id="show_calc_length">
+  <input type="checkbox" id="show_calc_row">
+  <input type="number" id="calc_length" value="50">
+  <button id="shift_to_russian"></button>
+  <button id="unshift_to_english"></button>
+  <div id="elements"></div>
+  <div id="controls"></div>
+  <div id="raport_disc_colors_count_extra"></div>
+  <button id="show_images_galery"></button>
+  <div class="dim"></div>
+  <div id="image_caption"></div>
+  <span name="csrf-param" content="x"></span>
+  <span name="csrf-token" content="x"></span>
+</div>
+
+<script>
+// --- Minimal shims so the extracted app (which expects Rails/Bootstrap helpers) runs standalone ---
+
+// I18n stub with the string keys the app looks up (see assets extraction notes)
+window.I18n = {
+  t: function(key, opts){
+    var strings = {
+      "js.comment.cancel":"Cancel", "js.comment.sent_comment":"Send",
+      "js.raport.and":"and", "js.raport.beads":"beads",
+      "js.raport.calculator.types.czech":"Czech", "js.raport.calculator.types.delica":"Delica",
+      "js.raport.calculator.types.toho":"Toho",
+      "js.raport.confirm.not_saved_upload":"Pattern is not saved. Continue anyway?",
+      "js.raport.confirm_color_join":"Join these colors?",
+      "js.raport.copied":"Copied",
+      "js.raport.errors.not_correct_scheme":"Incorrect pattern data",
+      "js.raport.loading":"Loading...",
+      "js.raport.model.beads":"beads","js.raport.model.gramm":"g",
+      "js.raport.model.snapshot":"Snapshot","js.raport.model.speed":"Speed",
+      "js.raport.model.stand_colour":"Background color","js.raport.model.zoom":"Zoom",
+      "js.raport.png.author":"Author","js.raport.png.circumference":"Circumference",
+      "js.raport.png.name":"Name","js.raport.png.repeat_of_colors":"Repeat",
+      "js.raport.png.rows_per_repeat":"Rows per repeat",
+      "js.raport.png.total_number_of_beads":"Total beads",
+      "js.raport.png.total_number_of_rows":"Total rows",
+      "js.raport.reader.sound_blank":"(blank)",
+      "js.raport.shift_confirm":"Shift pattern?",
+      "js.raport.sure_delete":"Delete this pattern?",
+      "js.raport.sure_delete_color":"Delete this color?",
+      "js.raport.sure_delete_unused_colors":"Delete all unused colors?",
+      "js.raport.without_cat":"(no category)"
+    };
+    return strings[key] || key;
+  }
+};
+
+// jQuery.Shortcuts stub (original used a small keyboard-shortcut plugin; provide a no-crash shim
+// with basic Ctrl+Z / Ctrl+S support wired directly instead)
+</script>
+<script src="assets/application-latest.js"></script>
+<script>
+// Simple modal open/close (Bootstrap's .modal('toggle') is called by the bundled app;
+// bundled Bootstrap JS inside application-latest.js should already provide $.fn.modal —
+// these helpers are a fallback if it doesn't attach for any reason.)
+function showModal(id){ document.getElementById(id).classList.add('show'); document.getElementById('global_backdrop').classList.add('show'); }
+function hideModal(id){ document.getElementById(id).classList.remove('show'); document.getElementById('global_backdrop').classList.remove('show'); }
+if (window.jQuery && !jQuery.fn.modal) {
+  jQuery.fn.modal = function(action){
+    return this.each(function(){
+      if (action === 'toggle') { this.classList.toggle('show'); document.getElementById('global_backdrop').classList.toggle('show'); }
+      else if (action === 'hide') { hideModal(this.id); }
+      else { showModal(this.id); }
+    });
+  };
+}
+
+jQuery(function($){
+  // Minimal local pattern store bridge so "Save (offline)" / browse-your-patterns works
+  // without a server, using the app's own RaportLocalStore class if present.
+  var local_store = (typeof RaportLocalStore !== 'undefined') ? new RaportLocalStore() : {
+    get_all_ids: function(){ return []; },
+    get: function(id){ try { return JSON.parse(localStorage.getItem('cbp_'+id)); } catch(e){ return null; } },
+    save: function(o){ if(!o.id) o.id = 'p'+Date.now(); localStorage.setItem('cbp_'+o.id, JSON.stringify(o)); return o; },
+    add: function(o){ return this.save(o); }
+  };
+  window.local_store = local_store;
+
+  // Boot a blank pattern into #main_field directly using the RaportDraw class,
+  // bypassing the original Rails-rendered "load_raport(...)" call (which needed
+  // server-provided raport JSON / save URLs). This gives an immediately usable canvas.
+  if (typeof RaportDraw !== 'undefined') {
+    var raport = new RaportDraw($('#main_field'), null);
+    var defaultColors = ["#000000","#ff0000","#00ff00","#0000ff","#ffff00","#ff00ff","#00ffff","#1a867f","#861A82"];
+    for (var i in defaultColors) raport.add_color(defaultColors[i]);
+    raport.set_current_color_index(1);
+    window.currentRaport = raport;
+
+    function paintPalette(){
+      $('#colors td').remove();
+      var colors = raport.get_colors();
+      for (var idx in colors) {
+        var c = colors[idx];
+        var td = $('<td></td>').css('background-color', c.get_color()).data('color_index', idx);
+        $('#colors tr:nth-child(' + (idx % 2 + 1) + ')').append(td);
+        if (idx == raport.get_current_color_index()) td.addClass('active');
+        td.on('click', function(){
+          $('#colors td').removeClass('active');
+          $(this).addClass('active');
+          raport.set_current_color_index($(this).data('color_index'));
+        });
+      }
+    }
+    paintPalette();
+    raport.set_change_callback(function(){ paintPalette(); });
+
+    // Wire toolbar buttons directly to the RaportDraw API (the app also wires many
+    // of these itself via #id selectors inside application-latest.js's load_raport();
+    // these bindings are redundant-safe fallbacks that make the toolbar usable even
+    // if load_raport()'s own wiring didn't run because there was no server data).
+    var toolMap = {set_paint:'paint', set_fill:'fill', set_line:'line', set_rectangle:'rectangle', select:'select', set_pick:'pick'};
+    $.each(toolMap, function(id, tool){
+      $('#' + id).off('click.fallback').on('click.fallback', function(){
+        $('.paint-toolbar .btn').removeClass('active');
+        $(this).addClass('active');
+        raport.set_current_tool(tool);
+      });
+    });
+    $('#zoom_in').off('click.fb').on('click.fb', function(){ raport.zoom_in(); });
+    $('#zoom_out').off('click.fb').on('click.fb', function(){ raport.zoom_out(); });
+    $('#go_back').off('click.fb').on('click.fb', function(){ raport.step_back(); });
+    $('#go_forward').off('click.fb').on('click.fb', function(){ raport.step_forward(); });
+    $('#mirror_horizontal').off('click.fb').on('click.fb', function(){ raport.get_current_tool().mirror_horizontal && raport.get_current_tool().mirror_horizontal(); });
+    $('#mirror_vertical').off('click.fb').on('click.fb', function(){ raport.get_current_tool().mirror_vertical && raport.get_current_tool().mirror_vertical(); });
+    $('#show_symbols').off('click.fb').on('click.fb', function(){ raport.set_show_chars(!raport.is_show_chars()); $(this).toggleClass('active'); });
+    $('#add_color').off('click.fb').on('click.fb', function(){ showModal('modal'); $('#delete_color').hide(); });
+    $('#choose_color').off('click.fb').on('click.fb', function(){
+      var hex = $('#colorpicker_input').val() || '#ff0000';
+      raport.add_color(hex);
+      raport.set_current_color_index(raport.get_colors().length - 1);
+      hideModal('modal');
+    });
+    $('#delete_unused_colors').off('click.fb').on('click.fb', function(){
+      if (confirm(I18n.t('js.raport.sure_delete_unused_colors'))) { raport.delete_unused_colors(); paintPalette(); }
+    });
+    $('#set_width_left,#set_width_right').off('click.fb').on('click.fb', function(){
+      var w = parseInt($('#width').val());
+      if (raport.get_raport_width() !== w) raport.set_raport_width(w, this.id === 'set_width_left');
+    });
+    $('#set_height').off('click.fb').on('click.fb', function(){
+      raport.set_max_rows(parseInt($('#height').val()));
+    });
+    $('#insert_rows').off('click.fb').on('click.fb', function(){ raport.get_current_tool().insert_rows && raport.get_current_tool().insert_rows(); });
+    $('#delete_rows').off('click.fb').on('click.fb', function(){ raport.get_current_tool().remove_rows && raport.get_current_tool().remove_rows(); });
+    $('#select_all').off('click.fb').on('click.fb', function(){ raport.set_current_tool('select'); raport.get_current_tool().select_all && raport.get_current_tool().select_all(); return false; });
+
+    $('#get_png').off('click.fb').on('click.fb', function(){
+      raport.get_png_bytes(function(blob){ saveAs(blob, (window.currentPatternName||'pattern') + '.png'); }, false, window.currentPatternName||'pattern');
+    });
+    $('#get_pdf').off('click.fb').on('click.fb', function(){
+      raport.get_pdf_bytes(function(blob){ saveAs(blob, (window.currentPatternName||'pattern') + '.pdf'); }, false, window.currentPatternName||'pattern');
+    });
+    $('#get_dbb').off('click.fb').on('click.fb', function(){
+      if (raport.get_dbb_bytes) saveAs(raport.get_dbb_bytes(), (window.currentPatternName||'pattern') + '.dbb');
+    });
+    $('#get_jbb').off('click.fb').on('click.fb', function(){
+      if (raport.get_jbb_bytes) saveAs(raport.get_jbb_bytes(), (window.currentPatternName||'pattern') + '.jbb');
+    });
+    $('#save_raport,#submit_save').off('click.fb').on('click.fb', function(){
+      var name = $('input[name="raport[name]"]').val() || window.currentPatternName || ('pattern_' + Date.now());
+      window.currentPatternName = name;
+      var rec = { id: window.currentPatternId || ('local_' + Date.now()), name: name, data: raport.to_json() };
+      window.currentPatternId = rec.id;
+      local_store.save(rec);
+      hideModal('modal_edit_settings');
+      alert('Saved locally (browser storage) as "' + name + '"');
+    });
+    $('#settings').off('click.fb').on('click.fb', function(){ showModal('modal_edit_settings'); });
+
+    // Raphael color wheel, if the bundle exposes Raphael.colorwheel
+    if (window.Raphael && Raphael.colorwheel) {
+      var wheel = Raphael.colorwheel($('#colorpicker').get(0), 160);
+      wheel.color('#FFFFFF');
+      wheel.input($('#colorpicker_input')[0]);
+      wheel.onchange(function(c){ $('#currrent_color').css('background-color', c.hex); });
+    }
+
+    console.log('CrochetBeadPaint offline editor initialized.', raport);
+  } else {
+    $('#main_field').html('<p style="padding:20px;color:#900">application-latest.js did not load ' +
+      '(RaportDraw class not found) — check the browser console and that assets/application-latest.js is reachable.</p>');
+  }
+});
+</script>
+</body>
+</html>

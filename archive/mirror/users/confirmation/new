@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrochetBeadPaint</title>
+    <meta content="authenticity_token" name="csrf-param" />
+<meta content="4TW8oGhIFzlssmn7jBDrPNV2un0XWwl4+eJj+oTO754=" name="csrf-token" />
+
+    <link href="/assets/application-83002e4a1c746c3be9327dd509a5c3c8.css" media="all" rel="stylesheet" />
+
+    <!--
+    <link href="/images/apple-touch-icon-144x144-precomposed.png" rel="apple-touch-icon-precomposed" sizes="144x144" type="image/png" />
+
+
+    <link href="/images/apple-touch-icon-114x114-precomposed.png" rel="apple-touch-icon-precomposed" sizes="114x114" type="image/png" />
+
+    <link href="/images/apple-touch-icon-72x72-precomposed.png" rel="apple-touch-icon-precomposed" sizes="72x72" type="image/png" />
+
+    <link href="/images/apple-touch-icon-precomposed.png" rel="apple-touch-icon-precomposed" type="image/png" />
+
+    <link href="/images/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+     -->
+
+    <script src="/assets/application-3b37a9ebff0e9f4c07314dd09acb0176.js"></script>
+  </head>
+  <body>
+
+    <div class="navbar navbar-fluid-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">CrochetBeadPaint</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="alert fade in alert-error"><button class="close" data-dismiss="alert">&times;</button>Вам необходимо войти в систему или зарегистрироваться.</div>
+        <h2>Отправить письмо с подтверждением регистрации</h2>
+
+<form accept-charset="UTF-8" action="/users/confirmation" class="new_user" id="new_user" method="post"><div style="display:none"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4TW8oGhIFzlssmn7jBDrPNV2un0XWwl4+eJj+oTO754=" /></div>
+
+  <div><label for="user_email">Email</label><br />
+  <input autofocus="autofocus" id="user_email" name="user[email]" type="email" value="" /></div>
+
+  <div><input class="btn" name="commit" type="submit" value="Отправить" /></div>
+</form>
+  <a href="/users/sign_in">Войти</a><br />
+
+  <a class="btn btn-primary" href="/users/sign_up">Зарегистрироваться</a><br />
+
+  <a href="/users/password/new">Забыли пароль?</a><br />
+
+
+
+
+
+      </div><!--/row-->
+
+      <footer>
+      </footer>
+
+    </div> <!-- /container -->
+    <iframe id="x-download-frame" name="x-download-frame" width="0" height="0" style="display: none;" application="yes" ></iframe>
+    <script>
+  $(function(){
+      $.reject({
+          reject: {
+              msie: true
+          },
+          display: ['chrome','firefox','safari'],
+          imagePath: '/images/browsers/',
+          close: false,
+          header:'К сожалению работа данного веб приложения не возможна в Internet Explorer',
+          paragraph1:'',
+          paragraph2:'Для продолжения работы загрузите один из предложенных браузеров',
+          browserInfo: {
+              chrome: {
+                  text: 'Chrome',
+                  url: 'http://www.google.com/chrome/'
+              },
+              firefox: {
+                  text: 'Firefox',
+                  url: 'http://www.mozilla.com/firefox/'
+              },
+              safari: {
+                  text: 'Safari',
+                  url: 'http://www.apple.com/safari/download/'
+              }
+          },
+          beforeReject: function() {
+              var browser_version = parseFloat($.browser.version);
+              if (
+                      $.browser.name === 'firefox' && browser_version < 27 ||
+                      $.browser.name === 'chrome' && browser_version < 31 ||
+                      $.browser.name === 'safari' && browser_version < 5
+              ) {
+                  this.reject.all = true;
+                  this.closeLink = 'Закрыть';
+                  this.closeMessage = 'Приложение может нестабильно работать с устаревшими версиями браузеров';
+                  this.close = true;
+                  this.header = 'Вы используете устаревшую версию браузера';
+                  this.paragraph2 = 'Для загрузки актуальной версии воспользуйтечь одной из предложенных ссылок';
+                  this.closeCookie = true;
+              };
+              if($.browser.name === 'opera'){
+                  this.reject.all = true;
+                  this.closeLink = 'Закрыть';
+                  this.closeMessage = 'Приложение не до конца совместимо с браузером Opera';
+                  this.close = true;
+                  this.header = 'К сожалению даного веб приложение не полностью совместимо с браузером Opera';
+                  this.paragraph2 = 'Для загрузки другого браузеза воспользуйтечь одной из предложенных ссылок';
+                  this.closeCookie = true;
+              };
+          }
+      });
+  })
+</script>
+  </body>
+</html>
