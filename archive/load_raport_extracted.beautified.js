@@ -1,0 +1,488 @@
+function load_raport(t, e, n, i, r, o, a) {
+    function s() {
+        return $("div.row-fluid:first").width()
+    }
+
+    function l() {
+        n || (C = !1, !1, $("#save_raport").addClass("btn-danger"))
+    }
+
+    function c() {
+        C = !0, $("#save_raport").removeClass("btn-danger")
+    }
+
+    function h(t) {
+        if (C) t && t();
+        else if (i) {
+            var e = local_store.get(_);
+            e.data = b.to_json(), local_store.save(e), c(), t && t()
+        } else $.post(S, {
+            data: b.to_json()
+        }, function(e) {
+            e.success && (c(), t && t())
+        }, "JSON")
+    }
+
+    function u(t, e) {
+        var n = e ? "color_table_item" : "item_color_div",
+            i = `<div style="background-color:${t.get_color()};color:${t.get_invert_color()};" class="${n} color_index_${t.get_index()}">`;
+        return b.is_show_chars() && !t.get_is_default() && (i += t.get_char()), t.get_is_default() && (i += '<div class="item_color_div_list_dot"></div>'), i += "</div>"
+    }
+
+    function d() {
+        for (var t in $("#colors td").remove(), b.get_colors()) {
+            var e = $("<td></td>");
+            e.append(u(b.get_colors()[t], !0)), $("#colors tr:nth-child(" + (t % 2 + 1) + ")").append(e), e.data("color_index", t), t == b.get_current_color_index() && e.addClass("active"), n || e.on("click", function() {
+                if (1 === ++w) b.set_current_color_index($(this).data("color_index")), $("#colors td").removeClass("active"), $("#raport_disc_colors_count div.item_color_div").removeClass("active"), $("#raport_disc_colors_count div.color_index_" + $(this).data("color_index")).addClass("active"), $(this).addClass("active"), T = setTimeout(function() {
+                    w = 0
+                }, x);
+                else {
+                    clearTimeout(T);
+                    var t = $(this).data("color_index");
+                    F.color(b.get_colors()[t].get_color()), $("#color_desc").val(b.get_colors()[t].get_desc()), 0 != b.get_current_color_index() && ($("#delete_color").show(), $("#modal").modal("toggle"), $("#modal").data("type", "change")), w = 0
+                }
+            }).on("dblclick", function(t) {
+                t.preventDefault()
+            }).on("mousedown", function(t) {
+                M = !0;
+                var e = $(this).data("color_index"),
+                    n = b.get_colors()[e].get_color();
+                k = $("<div class='color_table_item_drag' style='background-color:" + n + "'></div>"), $("body").append(k), A = e, b.skip_mouse_events = !0, t.preventDefault()
+            }).on("mouseup", function() {
+                M = !1, b.skip_mouse_events = !1;
+                var t = $(this).data("color_index");
+                t != A && confirm(I18n.t("js.raport.confirm_color_join")) && b.replace_color_by_index(t, A), k.remove()
+            })
+        }
+    }
+
+    function p() {
+        var t = b.repeat_length();
+        $("#raport_disc_width").html(b.get_raport_width()), $("#raport_disc_repeat").html(t), $("#raport_disc_repeat_rows").html(t % b.get_raport_width() == 0 ? Math.floor(t / b.get_raport_width()) : Math.floor(t / b.get_raport_width()) + " " + I18n.t("js.raport.and") + " " + t % b.get_raport_width() + " " + I18n.t("js.raport.beads")), $("#raport_disc_used_rows").html(b.get_all_height()), $("#raport_disc_elements_count").html(b.get_used_items_count());
+        var e = b.get_elements();
+        $("#raport_disc_colors_count").empty();
+        for (var n = {}, i = b.get_active_colors(), r = 0; r < b.get_all_height() * b.get_raport_width(); r++) {
+            var o = e[r].get_color().get_index();
+            n[o] = n[o] || 0, n[o] += 1
+        }
+        for (var a in n)
+            if (-1 != i.indexOf(b.get_colors()[a])) {
+                var s = $('<div class="disc_item"></div>'),
+                    l = $(u(b.get_colors()[a]));
+                b.get_current_color_index() == a && l.addClass("active"), s.append('<div style="float:left">' + n[a] + " X&nbsp;</div>"), s.append(l), $("#raport_disc_colors_count").append(s)
+            } $("#raport_disc").show()
+    }
+
+    function f() {
+        var t = performance.now();
+        if (g() && ($("#raport_items").empty(), p(), 0 !== b.repeat_length())) {
+            var e = s() - $("#main_field").width() - 5,
+                n = Math.ceil(90 * b.get_active_colors().length / e) * $("#raport_disc_colors_count div:first").height();
+            $("#raport_items").height($("#main_field").height() - $("#raport_disc").height() - n);
+            var i = b.get_repeat_lits_items(),
+                r = 20;
+            Math.floor(($("#raport_items").height() - 20) / r);
+            $("#raport_items").width(e);
+            for (var o = "", a = i.length - 1; a >= 0; a--) {
+                var l = i[a];
+                o += `<div class="item_element" id="item_index_${a}">${u(b.get_colors()[l.i])}<span>${l.q}</span></div>`, 0
+            }
+            $("#raport_items").append(o), !0;
+            var c = performance.now();
+            console.log("Color table repaint in - :", c - t)
+        }
+    }
+
+    function m() {
+        var t = s(),
+            e = b.get_width() + 20,
+            n = g() ? .7 : 1,
+            i = Math.floor(t * n);
+        e = e > i ? i : e;
+        var r = $(window).height() - 120 - (0 === $("a.shop").size() ? 0 : 48);
+        $("#main_field").height(r), $("#main_field").width(e)
+    }
+
+    function g() {
+        return $(".right_panel").is(":visible")
+    }
+
+    function v() {
+        b.can_export_to_dbb() ? $("#get_dbb").show() : $("#get_dbb").hide()
+    }
+
+    function y(t) {
+        if ($("#main_field").empty(), L = t.name, P = t.id, (b = new RaportDraw($("#main_field"), t.data)).is_protected = t.user_id && t.original_author_id && t.user_id != t.original_author_id, b.set_uniq_id(E), !t.data) {
+            var e = ["#000000", "#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#1a867f", "#861A82"];
+            for (var i in e) b.add_color(e[i]);
+            b.set_current_color_index(1)
+        }
+        var r;
+        b.set_change_callback(function() {
+            l(), clearInterval(r), r = setTimeout(function() {
+                f(), r = null
+            }, 1), v()
+        }), b.is_show_chars() && $("#show_symbols").addClass("active"), b.is_draw_first && $("#is_draw_first").addClass("active"), b.is_draw_corrected && $("#is_draw_corrected").addClass("active"), b.is_draw_simulation && $("#is_draw_simulation").addClass("active"), b.get_raport_width() > 40 && $("#3d_model").prop("disabled", !0), v(), b.set_pick_callback(function(t) {
+            $("#colors td").removeClass("active"), $.each($("#colors td"), function(e, n) {
+                $(this).data("color_index") == t.get_index() && $(n).addClass("active")
+            })
+        }), b.set_end_select_callback(function() {
+            n || $(".only_with_select").removeProp("disabled"), $("#vertical_displacement").val(b.get_current_tool().rows_number_select());
+            var t = b.get_current_tool().get_selected_repeat_indexes();
+            b.get_repeat_lits_items();
+            for (var e in $("div.item_element").css({
+                    backgroundColor: ""
+                }), $("div.disc_item").css({
+                    backgroundColor: ""
+                }), t) t[e] >= 0 && 0 != $("#item_index_" + t[e]).size() && $("#item_index_" + t[e]).css({
+                backgroundColor: "gray"
+            })
+        }), $("#width").val(b.get_raport_width()), $("#height").val(b.get_max_rows()), m(), d(), setTimeout(f, 300), n && (b.set_current_tool("pick"), $("#pick").addClass("active")), $("#main_field").scrollTop($("#main_field").prop("scrollHeight"));
+        for (i = 0; i < b.get_bead_types().length; i++) $("#calc_type").append('<option value="' + b.get_bead_types()[i].id + '">' + b.get_bead_types()[i].label + "</option>")
+    }
+    var _, E, b, x = 300,
+        w = 0,
+        T = null,
+        R = t + ".json",
+        S = t + "/save_raport",
+        C = !0,
+        H = e;
+    i ? (_ = sessionStorage.current_raport_id, E = _) : E = o;
+    var k, A, M = !1;
+    $("body").on("mousemove", function(t) {
+        M && k && (k.offset({
+            top: t.pageY + 10,
+            left: t.pageX + 10
+        }), (t.pageY < 20 || t.pageY > 400 || t.pageX < 20 || t.pageX > 900) && (M = !1, b.skip_mouse_events = !1, k.remove(), A = null))
+    }).on("mouseup", function() {
+        M && k && (M = !1, b.skip_mouse_events = !1, A = null, k.remove())
+    });
+    var P, L = "";
+    if ($("#raport_disc").hide(), n && $(".only_can_save").prop("disabled", !0), $("div.navbar").css({
+            marginBottom: 0
+        }), $("div.btn-toolbar").css({
+            marginBottom: 3,
+            marginTop: 3
+        }), $("#get_png").click(function() {
+            b.get_png_bytes(function(t) {
+                saveAs(t, L + ".png")
+            }, r, L)
+        }), $("#get_pdf").click(function() {
+            b.get_pdf_bytes(function(t) {
+                saveAs(t, L + ".pdf")
+            }, r, L)
+        }), $("#horizontal_displacement").val(0), $("#number_of_copies").val(1), $("#submit_clone").click(function() {
+            $("#modal_clone").modal("toggle"), b.get_current_tool().copy_selected_raport(parseInt($("#horizontal_displacement").val()), parseInt($("#vertical_displacement").val()), parseInt($("#number_of_copies").val())), $("#height").val(b.get_max_rows())
+        }), $("#mirror_vertical").click(function() {
+            b.get_current_tool().mirror_vertical()
+        }), $("#mirror_horizontal").click(function() {
+            b.get_current_tool().mirror_horizontal()
+        }), $("#3d_model").click(function() {
+            return sessionStorage.raport_data = b.to_json(), window.open("/raports/model", "3D", "height=700,width=700,toolbar=no,status=no,scrollbars=no,menubar=no"), !1
+        }), $("#hide_left_panel").addClass("active"), $("#hide_left_panel").click(function() {
+            $(".right_panel").toggle(), m(), g() && f()
+        }), $(window).resize(function() {
+            m(), f()
+        }), i) {
+        var D = local_store.get(_);
+        y(D), $("#raport_disc_name").html(L), $("#raport_name_setting").val(L), $("#raport_comment_setting").val(D.comment), $("#category_id").val(D.category_id)
+    } else y(a);
+    var F = Raphael.colorwheel($("#colorpicker").get(0), 200);
+    F.color("#FFFFFF"), F.input($("#colorpicker_input")[0]), F.onchange(function(t) {
+        $("#currrent_color").css({
+            "background-color": t.hex
+        })
+    }), $("#set_paint").addClass("active"), $(".only_with_select").prop("disabled", !0), $("#go_back").click(function() {
+        b.step_back()
+    }), $("#go_forward").click(function() {
+        b.step_forward()
+    }), $("#turn_right").click(function() {
+        b.rotate_simulation_right(), l()
+    }), $("#turn_left").click(function() {
+        b.rotate_simulation_left(), l()
+    }), $("#shift_select").val(b.get_shift_factor()), $("#shift_select").change(function() {
+        b.set_shift_factor(parseFloat($(this).val())), l()
+    }), $("#get_dbb").click(function() {
+        i ? saveAs(b.get_dbb_bytes(), L + ".dbb") : (C || confirm(I18n.t("js.raport.confirm.not_saved_upload"))) && window.open("/raports/" + P + "/dbb", "x-download-frame")
+    }), $("#get_jbb").click(function() {
+        i ? saveAs(b.get_jbb_bytes(), L + ".jbb") : (C || confirm(I18n.t("js.raport.confirm.not_saved_upload"))) && window.open("/raports/" + P + "/jbb", "x-download-frame")
+    }), $("#get_cbb").click(function() {
+        (C || confirm(I18n.t("js.raport.confirm.not_saved_upload"))) && window.open("/raports/" + P + "/cbb", "x-download-frame")
+    }), $("#set_width_left").click(function() {
+        $("#set_width_left,#set_width_right").removeClass("btn-danger"), $("#set_width_left,#set_width_right").prop("disabled", !0);
+        var t = parseInt($("#width").val());
+        b.get_raport_width() !== t && b.set_raport_width(t, !0) && (l(), m(), f())
+    }), $("#set_width_right").click(function() {
+        $("#set_width_left,#set_width_right").removeClass("btn-danger"), $("#set_width_left,#set_width_right").prop("disabled", !0);
+        var t = parseInt($("#width").val());
+        b.get_raport_width() !== t && b.set_raport_width(t) && (l(), m(), f())
+    }), $("#set_height").click(function() {
+        $(this).removeClass("btn-danger"), $(this).prop("disabled", !0), b.set_max_rows(parseInt($("#height").val())) && (l(), f())
+    }), $("#set_paint").click(function() {
+        V(), b.set_current_tool("paint")
+    }), $("#set_line").click(function() {
+        V(), b.set_current_tool("line")
+    }), $("#set_clone").click(function() {
+        $("#modal_clone").modal("toggle")
+    }), $("#insert_rows").click(function() {
+        b.get_current_tool().insert_rows(), $("#height").val(b.get_max_rows())
+    }), $("#delete_rows").click(function() {
+        b.get_current_tool().remove_rows()
+    }), $("#zoom_in").click(function() {
+        b.zoom_in(), m(), f()
+    }), $("#zoom_out").click(function() {
+        b.zoom_out(), m(), f()
+    }), $("#show_symbols").click(function() {
+        b.set_show_chars(!b.is_show_chars()), l(), d(), f()
+    }), $("#is_draw_first").click(function() {
+        b.is_draw_first = !b.is_draw_first, m()
+    }), $("#is_draw_corrected").click(function() {
+        b.is_draw_corrected = !b.is_draw_corrected, m()
+    }), $("#is_draw_simulation").click(function() {
+        b.is_draw_simulation = !b.is_draw_simulation, m()
+    }), $("#like").click(function() {
+        send_like_request($(this).data("like_url"), $(this).data("unlike_url"), $(this).find("i")[0])
+    }), $("#select_all").click(function() {
+        return $("#select").parent().find("button").removeClass("active"), $("#select").addClass("active"), b.set_current_tool("select"), b.get_current_tool().select_all(), !1
+    }), $("#show_image_modal").click(function() {
+        $("#image_load_modal").modal("toggle")
+    }), $("#add_image_button").click(function() {
+        $("#upload_images_field").click()
+    });
+    var I = function() {
+        var t = $(this).parents(".modal-body:first").find("input[type=file]").data("raport_id"),
+            e = $(this).data("image_id"),
+            n = $(this).parent().parent();
+        $.post("/raports/" + t + "/delete_image", {
+            image_id: e
+        }, function() {
+            n.remove()
+        }, "JSON")
+    };
+    $(".delete_image_button").click(I), 0 !== $("#show_images_galery").length && $("#show_images_galery").magnificPopup({
+        items: $("#show_images_galery").data("images"),
+        type: "image",
+        gallery: {
+            enabled: !0
+        }
+    }), $("#upload_images_field").change(function() {
+        $("body").append('<div class="dim" style="font-size: 100pt;padding-top: 200px">Loading...</div>');
+        var t = new FormData;
+        jQuery.each(this.files, function(e, n) {
+            t.append("images[]", n)
+        }), t.append($("[name=csrf-param]").attr("content"), $("[name=csrf-token]").attr("content")), $.ajax("/raports/" + $(this).data("raport_id") + "/add_images", {
+            data: t,
+            cache: !1,
+            contentType: !1,
+            iframe: !0,
+            dataType: "json",
+            processData: !1,
+            method: "POST",
+            type: "POST"
+        }).complete(function(t) {
+            $("div.dim").remove();
+            var e = t.responseJSON;
+            if (e.success)
+                for (var n in e.images) {
+                    var i = e.images[n];
+                    if (i.success) {
+                        var r = $('<div class="thumbnail image_thumb"></div>'),
+                            o = $('<div class="caption"><p style="overflow: hidden;text-overflow: ellipsis">' + i.original_filename + '</p><button class="delete_image_button" class="btn btn-default"><i class="fa fa-trash"></i></button></div></div>'),
+                            a = $('<img src="' + i.url + '" />');
+                        o.find("button").data("image_id", i.id), o.find("button").click(I), r.append(a), r.append(o), $("#image_caption").remove(), $("#raport_images").append(r)
+                    }
+                }
+        })
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+Z",
+        handler: function() {
+            b.step_back()
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+Y",
+        handler: function() {
+            b.step_forward()
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+S",
+        handler: function() {
+            h()
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+A",
+        handler: function() {
+            $("#select_all").trigger("click")
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+C",
+        handler: function() {
+            "select" == b.get_current_tool().get_name() && b.get_current_tool().copy_to_clipboard()
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "Ctrl+V",
+        handler: function() {
+            "select" != b.get_current_tool().get_name() || n || (b.get_current_tool().set_from_clipboard(), d(), f(), p(), l())
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "delete",
+        handler: function() {
+            "select" == b.get_current_tool().get_name() && b.get_current_tool().clear()
+        },
+        list: "editor"
+    }), $.Shortcuts.add({
+        type: "down",
+        mask: "shift+delete",
+        handler: function() {
+            "select" == b.get_current_tool().get_name() && b.get_current_tool().remove_rows()
+        },
+        list: "editor"
+    }), $.Shortcuts.start("editor");
+    var N, B, O, z, j, U, V = function() {
+            "select" === b.get_current_tool().get_name() && ($("div.item_element").css({
+                backgroundColor: ""
+            }), $("div.disc_item").css({
+                backgroundColor: ""
+            }), $(".only_with_select").prop("disabled", !0), b.get_current_tool().clear_select())
+        },
+        q = {},
+        W = function() {
+            q = {
+                name: $("[name='raport[name]']").val(),
+                comment: $("[name='raport[comment]']").val(),
+                category_id: $("[name='category_id']").val()
+            }
+        },
+        G = function() {
+            $("[name='raport[name]']").val(q.name), $("[name='raport[comment]']").val(q.comment), $("[name='category_id']").val(q.category_id)
+        };
+    W(), $("#settings_form").ajaxForm({
+        url: R,
+        type: "POST",
+        dataType: "json",
+        success: function(t) {
+            t.success && (W(), $("#raport_disc_name").text(q.name), $("#modal_edit_settings").modal("hide"), L = q.name)
+        }
+    }), $("#submit_save").click(function() {
+        if (i) {
+            var t = local_store.get(_);
+            t.name = $("[name='raport[name]']").val(), t.comment = $("[name='raport[comment]']").val(), t.category_id = $("[name='category_id']").val(), L = t.name, local_store.save(t), W(), $("#raport_disc_name").text(q.name), $("#modal_edit_settings").modal("hide")
+        } else $("#settings_form").submit()
+    }), $("#set_pick").click(function() {
+        V(), b.set_current_tool("pick")
+    }), $("#add_color").click(function() {
+        $("#modal").modal("toggle"), $("#delete_color").hide(), $("#color_desc").val(""), $("#modal").data("type", "add")
+    }), $("#delete_color").click(function() {
+        confirm(I18n.t("js.raport.sure_delete_color")) && (b.delete_color_by_index(b.get_current_color().get_index()), l(), d(), f())
+    }), $("#delete_unused_colors").click(function() {
+        confirm(I18n.t("js.raport.sure_delete_unused_colors")) && (b.delete_unused_colors(), l(), d())
+    }), $("#select").click(function() {
+        b.set_current_tool("select")
+    }), $("#width").keypress(function() {
+        $("#set_width_left,#set_width_right").addClass("btn-danger"), $("#set_width_left,#set_width_right").removeProp("disabled")
+    }), $("#height").keypress(function() {
+        $("#set_height").addClass("btn-danger"), $("#set_height").removeProp("disabled")
+    }), $("#set_height,#set_width_left,#set_width_right").prop("disabled", !0), $("#save_raport").click(function() {
+        h()
+    }), $("#set_fill").click(function() {
+        V(), b.set_current_tool("fill")
+    }), $("#set_rectangle").click(function() {
+        V(), b.set_current_tool("rectangle")
+    }), $(".paint-toolbar button").click(function() {
+        $(this).addClass("active").siblings().removeClass("active")
+    }), $("#choose_color").click(function() {
+        var t = $("#modal").data("type");
+        "add" == t ? (b.add_color(F.color().hex), b.set_current_color_index(b.get_colors().length - 1)) : "change" == t && b.get_current_color().set_color(F.color().hex), b.get_current_color().set_desc($("#color_desc").val()), l(), d(), f()
+    }), $("#import_from_image").click(function() {
+        $("#image_upload").click(), $("#image_container").empty(), $("#import_image_button").unbind("click"), $("#import_image_button").hide()
+    }), $("#image_upload").change(function(t) {
+        var e = t.currentTarget.files[0],
+            n = new FileReader;
+        n.onload = function(t) {
+            $("#image_container").empty();
+            var e = $('<img src="' + t.target.result + '" />');
+            e.load(function() {
+                j = this.width, U = this.height, $("#image_import_modal").modal("toggle")
+            }), $("#image_container").append(e), $("#import_image_button").show(), $("#import_image_button").unbind("click"), $("#import_image_button").click(function() {
+                $(this).hide(), $("body").append('<div class="dim" style="font-size: 100pt;padding-top: 200px">Loading...<span id="import_process">0</span>%</div>');
+                var t = new Worker(H),
+                    n = document.createElement("canvas"),
+                    i = n.getContext("2d");
+                n.width = O - N, n.height = z - B, i.drawImage(e[0], N, B, n.width, n.height, 0, 0, n.width, n.height);
+                var r = i.getImageData(0, 0, n.width, n.height);
+                t.addEventListener("message", function(t) {
+                    var e = t.data;
+                    "log" === e.type ? console.log(e.message) : "end" === e.type ? (b.load_form_colors_and_elements(e.result.colors, e.result.elements), d(), $("#image_import_modal").modal("toggle"), $("div.dim").remove(), $("#import_to_first").prop("checked", !1), $("#import_from_bitmap_raport").prop("checked", !1)) : "progress" === e.type && $("#import_process").html(e.percent)
+                }, !1), t.postMessage({
+                    type: "start",
+                    options: {
+                        image_data: r.data,
+                        width: n.width,
+                        height: n.height,
+                        raport_width: b.get_raport_width(),
+                        colors_number: parseInt($("#import_color_count").val()),
+                        import_to_first: $("#import_to_first").prop("checked"),
+                        parse_bitmap_raport: $("#import_from_bitmap_raport").prop("checked")
+                    }
+                })
+            })
+        }, n.readAsDataURL(e)
+    }), $("#image_import_modal").on("shown.bs.modal", function() {
+        $("#image_upload").val(null);
+        var t = $(this).find("img");
+        t.css({
+            "max-width": "600px",
+            "max-height": "400px"
+        }), t.Jcrop({
+            onSelect: function(t) {
+                N = parseInt(t.x), B = parseInt(t.y), O = parseInt(t.x2), z = parseInt(t.y2)
+            },
+            trueSize: [j, U],
+            setSelect: [parseInt(j / 4), parseInt(U / 4), 3 * parseInt(j / 4), 3 * parseInt(U / 4)]
+        })
+    }), $("#settings").click(function() {
+        $("#modal_edit_settings").modal("toggle")
+    }), $("#modal_edit_settings").on("hide.bs.modal", function() {
+        G()
+    }), $("#reader").click(function() {
+        return sessionStorage.raport_data = JSON.stringify({
+            raport: b.to_json(),
+            id: E
+        }), window.open("/raports/reader", "reader", "height=600,width=500,toolbar=no,status=no,scrollbars=no,menubar=no"), !1
+    });
+    var X = function(t) {
+            $("#calculated_elements").empty();
+            for (var e = 0; e < t.length; e++) {
+                var n = $("<div></div>");
+                n.append(u(t[e].color));
+                var i = $("<div>").text(`${t[e].count}(~ ${t[e].weight.toFixed(2)} ${I18n.t("js.raport.model.gramm")}) ${t[e].desc||""}`);
+                n.append(i), $("#calculated_elements").append(n)
+            }
+        },
+        Y = function() {
+            b.set_calc_type_id(parseInt($("#calc_type").val())), $("#radio_calc_length").prop("checked") && (b.set_calc_length(parseFloat($("#calc_length").val())), $("#show_calc_row").html(b.get_calc_row_length().toFixed(0))), $("#radio_calc_rows").prop("checked") && (b.set_calc_row_length(parseInt($("#calc_row").val())), $("#show_calc_length").html(b.get_calc_length().toFixed(2))), X(b.calc_bead_counts())
+        };
+    return $("#calculator").click(function() {
+        $("#modal_calculator").modal("toggle"), Y()
+    }), $("#shift_to_russian").click(function() {
+        confirm(I18n.t("js.raport.shift_confirm")) && (b.shift_to_russian(), l(), f())
+    }), $("#unshift_to_english").click(function() {
+        confirm(I18n.t("js.raport.shift_confirm")) && (b.unshift_to_english(), l(), f())
+    }), $("#calc_type").change(Y), $("#calc_length").keyup(Y), $("#calc_row").keyup(Y), $("#radio_calc_length").click(function() {
+        $("#show_calc_length").hide(), $("#calc_length").show(), $("#calc_length").val($("#show_calc_length").html()), $("#show_calc_row").show(), $("#calc_row").hide(), $("#show_calc_row").html($("#calc_row").val()), Y()
+    }), $("#radio_calc_rows").click(function() {
+        $("#show_calc_row").hide(), $("#calc_row").show(), $("#calc_row").val($("#show_calc_row").html()), $("#show_calc_length").show(), $("#calc_length").hide(), $("#show_calc_length").html($("#calc_length").val()), Y()
+    }), $("#calc_length").val("50"), $("#radio_calc_length").prop("checked") && $("#calc_row").hide(), $("#radio_calc_rows").prop("checked") && $("#calc_length").hide(), b
+}
